@@ -51,3 +51,16 @@ function updateCountdown() {
 
 setInterval(updateCountdown, 1000);
 updateCountdown();
+const darkModeBtn = document.getElementById("dark-mode-toggle");
+
+darkModeBtn.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  // Change button text/icon
+  if (document.body.classList.contains("dark-mode")) {
+    darkModeBtn.textContent = "☀️ Light Mode";
+  } else {
+    darkModeBtn.textContent = "🌙 Dark Mode";
+  }
+});
+
