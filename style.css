@@ -1,23 +1,56 @@
+/* General reset */
 body {
   font-family: Arial, sans-serif;
   text-align: center;
   background-color: #f5f5f5;
   margin: 0;
-  padding: 20px;
+  padding: 10px; /* less padding on small screens */
 }
 
+/* Container */
 .container {
-  max-width: 600px;
+  max-width: 100%;    /* full width on mobile */
+  width: 100%;
   margin: auto;
+  padding: 10px;
 }
 
+/* Title */
+h1 {
+  font-size: clamp(1.1rem, 5vw, 2rem); /* scales better */
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+
+/* Sessions container (mobile first = 1 column) */
+#sessions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* Session cards */
 .session {
   border: 2px solid #333;
-  border-radius: 10px;
-  padding: 15px;
-  margin: 10px;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 0; /* gap controls spacing */
+  text-align: left;
+  font-size: 0.95rem;
 }
 
+.session h2 {
+  margin: 0 0 8px;
+  font-size: clamp(1rem, 4vw, 1.3rem);
+}
+
+.session p {
+  margin: 4px 0;
+  font-size: clamp(0.85rem, 3vw, 1rem);
+  word-wrap: break-word;
+}
+
+/* Open and closed styles */
 .session.open {
   background-color: #d4edda;
   border-color: #28a745;
@@ -26,4 +59,30 @@ body {
 .session.closed {
   background-color: #f8d7da;
   border-color: #dc3545;
+}
+
+/* Current time display */
+#current-time {
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: clamp(0.85rem, 3vw, 1rem);
+}
+
+/* RESPONSIVE BREAKPOINTS */
+
+/* Tablets (≥ 600px) */
+@media (min-width: 600px) {
+  #sessions {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Desktops (≥ 1024px) */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1000px; /* wider container */
+  }
+  #sessions {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }
