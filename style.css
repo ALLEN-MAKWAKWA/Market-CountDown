@@ -86,3 +86,45 @@ h1 {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+/* Dark mode variables */
+body.dark-mode {
+  background-color: #121212;
+  color: #f0f0f0;
+}
+
+body.dark-mode .session.open {
+  background-color: #1b3b1b;
+  border-color: #28a745;
+  color: #e0ffe0;
+}
+
+body.dark-mode .session.closed {
+  background-color: #3b1b1b;
+  border-color: #dc3545;
+  color: #ffcccc;
+}
+
+body.dark-mode #current-time {
+  color: #f0f0f0;
+}
+
+body.dark-mode h1 {
+  color: #ffffff;
+}
+
+/* Dark mode toggle button */
+#dark-mode-toggle {
+  padding: 6px 12px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  background-color: #333;
+  color: #fff;
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+
+#dark-mode-toggle:hover {
+  background-color: #555;
+}
