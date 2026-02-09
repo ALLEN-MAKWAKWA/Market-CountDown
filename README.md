@@ -1,5 +1,5 @@
 # Forex Market Countdown
- 
+
 **Live Demo:** 🌐 [https://marketcountdown.netlify.app](https://marketcountdown.netlify.app)
 
 A clean, real-time **Forex Market Session Countdown** web app built with pure **HTML**, **CSS**, and **JavaScript** — no frameworks, no dependencies.
@@ -17,6 +17,14 @@ This version is optimized and simplified for **South African Standard Time (SAST
 - Auto-updates every second
 - Fully responsive design — works great on mobile, tablet, and desktop
 - Extremely lightweight (~few KB) and fast-loading
+
+## Screenshots
+
+### Desktop View
+![Desktop view of Forex Market Countdown](screenshots/desktop.png)
+
+### Mobile View (responsive design)
+![Mobile view](screenshots/mobile.jpeg)
 
 Feel free to bookmark it or add it to your trading dashboard!
 
