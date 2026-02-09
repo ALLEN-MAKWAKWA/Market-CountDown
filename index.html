@@ -1,24 +1,515 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Forex Market Countdown</title>
-  <link rel="stylesheet" href="style.css">
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; border-color: var(--border); }
+
+    :root, .light {
+      --background: hsl(0 0% 97%);
+      --foreground: hsl(220 20% 12%);
+      --card: hsl(0 0% 100%);
+      --card-foreground: hsl(220 20% 12%);
+      --primary: hsl(142 60% 38%);
+      --primary-fg: hsl(0 0% 100%);
+      --secondary: hsl(220 14% 92%);
+      --secondary-fg: hsl(220 20% 25%);
+      --muted: hsl(220 14% 94%);
+      --muted-fg: hsl(215 12% 45%);
+      --accent: hsl(38 92% 50%);
+      --destructive: hsl(0 72% 51%);
+      --border: hsl(220 14% 86%);
+      --session-open: hsl(142 60% 38%);
+      --session-closed: hsl(0 72% 51%);
+      --countdown: hsl(38 92% 45%);
+    }
+
+    .dark {
+      --background: hsl(220 20% 7%);
+      --foreground: hsl(210 20% 92%);
+      --card: hsl(220 18% 10%);
+      --card-foreground: hsl(210 20% 92%);
+      --primary: hsl(142 60% 45%);
+      --primary-fg: hsl(220 20% 7%);
+      --secondary: hsl(220 16% 16%);
+      --secondary-fg: hsl(210 20% 80%);
+      --muted: hsl(220 14% 14%);
+      --muted-fg: hsl(215 12% 50%);
+      --accent: hsl(38 92% 55%);
+      --destructive: hsl(0 72% 51%);
+      --border: hsl(220 14% 18%);
+      --session-open: hsl(142 60% 45%);
+      --session-closed: hsl(0 72% 51%);
+      --countdown: hsl(38 92% 55%);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--background);
+      color: var(--foreground);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* HEADER */
+    header {
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--primary) 10%, transparent);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon svg { color: var(--primary); }
+    .logo-title {
+      font-size: 18px; font-weight: 700;
+      letter-spacing: -0.025em; color: var(--foreground);
+    }
+    .logo-sub {
+      font-size: 12px; color: var(--muted-fg);
+    }
+    .header-controls {
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    /* UTC SELECT */
+    .utc-select-wrap {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .utc-select-wrap svg { color: var(--muted-fg); }
+    select {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      background: var(--card);
+      color: var(--foreground);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      outline: none;
+      cursor: pointer;
+    }
+    select:focus { box-shadow: 0 0 0 1px var(--primary); }
+    select option { background: var(--card); color: var(--foreground); }
+
+    /* THEME TOGGLE */
+    .theme-btn {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--foreground);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .theme-btn:hover { background: var(--secondary); }
+
+    /* MAIN */
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      flex: 1;
+      padding: 32px 24px;
+      width: 100%;
+    }
+
+    /* CURRENT TIME */
+    .time-display {
+      text-align: center;
+      margin-bottom: 32px;
+      animation: fadeIn 0.6s ease-out;
+    }
+    .time-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted-fg);
+      margin-bottom: 4px;
+    }
+    .time-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--foreground);
+    }
+
+    /* SESSION GRID */
+    .session-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    @media (min-width: 640px) { .session-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) { .session-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+    /* SESSION CARD */
+    .session-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 24px;
+      transition: all 0.5s;
+      animation: fadeIn 0.6s ease-out both;
+    }
+    .session-card:nth-child(2) { animation-delay: 0.1s; }
+    .session-card:nth-child(3) { animation-delay: 0.2s; }
+
+    .session-card.open {
+      border-color: color-mix(in srgb, var(--session-open) 30%, transparent);
+      box-shadow: 0 0 20px color-mix(in srgb, var(--session-open) 15%, transparent),
+                  0 0 60px color-mix(in srgb, var(--session-open) 5%, transparent);
+    }
+    .session-card.closed {
+      box-shadow: 0 0 20px color-mix(in srgb, var(--session-closed) 10%, transparent),
+                  0 0 60px color-mix(in srgb, var(--session-closed) 3%, transparent);
+    }
+
+    .status-bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .open .status-bar { background: var(--session-open); }
+    .closed .status-bar { background: color-mix(in srgb, var(--session-closed) 50%, transparent); }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .card-info {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .card-icon {
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .open .card-icon {
+      background: color-mix(in srgb, var(--session-open) 10%, transparent);
+      color: var(--session-open);
+    }
+    .closed .card-icon, .weekend .card-icon {
+      background: var(--secondary);
+      color: var(--muted-fg);
+    }
+    .card-name {
+      font-size: 18px; font-weight: 600; color: var(--foreground);
+    }
+    .card-city {
+      font-size: 14px; color: var(--muted-fg);
+    }
+
+    .status-indicator {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .status-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .open .status-dot {
+      background: var(--session-open);
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+    .closed .status-dot { background: var(--session-closed); }
+    .weekend .status-dot { background: var(--muted-fg); }
+    .status-text {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .open .status-text { color: var(--session-open); }
+    .closed .status-text { color: var(--session-closed); }
+    .weekend .status-text { color: var(--muted-fg); }
+
+    .countdown-section { }
+    .countdown-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted-fg);
+      margin-bottom: 4px;
+    }
+    .countdown-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--countdown);
+    }
+
+    /* FOOTER INFO */
+    .footer-info {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted-fg);
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+    }
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+    .social-icons a {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--secondary);
+      color: var(--muted-fg);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .social-icons a:hover {
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+    .social-icons svg { width: 18px; height: 18px; }
+    footer p {
+      font-size: 12px;
+      color: var(--muted-fg);
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+  </style>
 </head>
 <body>
- <div class="container">
-  <button id="dark-mode-toggle">🌙 Dark Mode</button>
-  <h1><i class="fas fa-chart-line"></i> Forex Market Countdown (SAST)</h1>
 
-  <div id="sessions"></div>
-  <p id="current-time"><i class="fas fa-clock"></i> Current Time</p>
-</div>
+<header>
+  <div class="header-inner">
+    <div class="logo-group">
+      <div class="logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+      </div>
+      <div>
+        <div class="logo-title">Forex Sessions</div>
+        <div class="logo-sub">Market Countdown</div>
+      </div>
+    </div>
+    <div class="header-controls">
+      <div class="utc-select-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <select id="utc-select"></select>
+      </div>
+      <button class="theme-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
 
+<main>
+  <div class="time-display">
+    <div class="time-label" id="time-label">Local Time (UTC+2)</div>
+    <div class="time-value" id="time-value">--:--:--</div>
+  </div>
+  <div class="session-grid" id="sessions"></div>
+  <p class="footer-info">Updates every second • Default timezone: SAST (UTC+2)</p>
+</main>
 
-  <script src="script.js"></script>
+<footer>
+  <div class="social-icons">
+    <a href="https://github.com/ALLEN-MAKWAKWA" target="_blank" rel="noopener noreferrer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+    </a>
+    <a href="https://www.linkedin.com/in/allen-makwakwa" target="_blank" rel="noopener noreferrer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+    </a>
+    <a href="https://www.instagram.com/ma_alvo_/" target="_blank" rel="noopener noreferrer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+    </a>
+  </div>
+  <p>© 2026 Allen Makwakwa | Built with passion</p>
+</footer>
+
+<script>
+const sessions = [
+  { name: "Asia", city: "Tokyo", icon: "🌏", openUTC: 0, closeUTC: 9 },
+  { name: "London", city: "London", icon: "🏛️", openUTC: 7, closeUTC: 16 },
+  { name: "New York", city: "New York", icon: "📈", openUTC: 12, closeUTC: 21 },
+];
+
+let utcOffset = 2;
+const container = document.getElementById("sessions");
+
+/* ---------- UTC SELECT ---------- */
+const utcSelect = document.getElementById("utc-select");
+for (let i = -12; i <= 14; i++) {
+  const opt = document.createElement("option");
+  opt.value = i;
+  opt.textContent = "UTC" + (i >= 0 ? "+" : "") + i;
+  if (i === 2) opt.selected = true;
+  utcSelect.appendChild(opt);
+}
+utcSelect.addEventListener("change", e => {
+  utcOffset = parseInt(e.target.value);
+});
+
+/* ---------- THEME TOGGLE ---------- */
+const themeBtn = document.getElementById("theme-toggle");
+const iconSun = document.getElementById("icon-sun");
+const iconMoon = document.getElementById("icon-moon");
+
+function updateThemeIcons() {
+  const isDark = document.documentElement.classList.contains("dark");
+  iconSun.style.display = isDark ? "block" : "none";
+  iconMoon.style.display = isDark ? "none" : "block";
+}
+updateThemeIcons();
+
+themeBtn.addEventListener("click", () => {
+  document.documentElement.classList.toggle("dark");
+  document.documentElement.classList.toggle("light");
+  updateThemeIcons();
+});
+
+/* ---------- HELPERS ---------- */
+const pad = n => n.toString().padStart(2, "0");
+
+function formatCountdown(ms) {
+  if (ms <= 0) return "00:00:00";
+  const s = Math.floor(ms / 1000);
+  return `${pad(s / 3600 | 0)}:${pad((s % 3600) / 60 | 0)}:${pad(s % 60)}`;
+}
+
+/* ---------- INIT CARDS (ONCE) ---------- */
+function initSessions() {
+  sessions.forEach((s, i) => {
+    const card = document.createElement("div");
+    card.className = "session-card";
+    card.dataset.index = i;
+
+    card.innerHTML = `
+      <div class="status-bar"></div>
+      <div class="card-top">
+        <div class="card-info">
+          <div class="card-icon">${s.icon}</div>
+          <div>
+            <div class="card-name">${s.name}</div>
+            <div class="card-city">${s.city}</div>
+          </div>
+        </div>
+        <div class="status-indicator">
+          <div class="status-dot"></div>
+          <span class="status-text"></span>
+        </div>
+      </div>
+      <div class="countdown-section">
+        <div class="countdown-label"></div>
+        <div class="countdown-value"></div>
+      </div>
+    `;
+
+    card.style.animationDelay = `${i * 100}ms`;
+    container.appendChild(card);
+  });
+}
+
+/* ---------- UPDATE CONTENT (EVERY SECOND) ---------- */
+function updateSessions() {
+  const now = new Date();
+  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+  const localMs = utcMs + utcOffset * 3600000;
+  const localDate = new Date(localMs);
+
+  document.getElementById("time-value").textContent =
+    `${pad(localDate.getHours())}:${pad(localDate.getMinutes())}:${pad(localDate.getSeconds())}`;
+  document.getElementById("time-label").textContent =
+    `Local Time (UTC${utcOffset >= 0 ? "+" : ""}${utcOffset})`;
+
+  const utcNow = new Date(utcMs);
+  const utcHourFrac =
+    utcNow.getHours() +
+    utcNow.getMinutes() / 60 +
+    utcNow.getSeconds() / 3600;
+
+  const isWeekend = [0, 6].includes(utcNow.getDay());
+
+  document.querySelectorAll(".session-card").forEach((card, i) => {
+    const s = sessions[i];
+    const statusText = card.querySelector(".status-text");
+    const label = card.querySelector(".countdown-label");
+    const value = card.querySelector(".countdown-value");
+
+    card.classList.remove("open", "closed", "weekend");
+
+    if (isWeekend) {
+      card.classList.add("weekend");
+      statusText.textContent = "Weekend";
+      label.textContent = "Market opens Monday";
+      value.textContent = "--:--:--";
+      return;
+    }
+
+    const isOpen = utcHourFrac >= s.openUTC && utcHourFrac < s.closeUTC;
+
+    if (isOpen) {
+      card.classList.add("open");
+      statusText.textContent = "Open";
+      label.textContent = "Closes in";
+      value.textContent = formatCountdown(
+        (s.closeUTC - utcHourFrac) * 3600000
+      );
+    } else {
+      card.classList.add("closed");
+      statusText.textContent = "Closed";
+      label.textContent = "Opens in";
+      const nextOpen = utcHourFrac < s.openUTC ? s.openUTC : s.openUTC + 24;
+      value.textContent = formatCountdown(
+        (nextOpen - utcHourFrac) * 3600000
+      );
+    }
+  });
+}
+
+/* ---------- START ---------- */
+initSessions();
+updateSessions();
+setInterval(updateSessions, 1000);
+</script>
+
 </body>
 </html>
