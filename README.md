@@ -1,20 +1,22 @@
-Forex Market Countdown
+# Forex Market Countdown
 
-A simple Forex Market Countdown Web App built with HTML, CSS, and JavaScript.
-It shows the status of the Asia, London, and New York Forex sessions, indicating whether each session is Open or Closed and counting down the time left to close or until open. This version is simplified for South African Time (SAST / UTC+2).
+**Live Demo:** 🌐 https://marketcountdown.netlify.app
 
-Features
+A clean, real-time **Forex Market Session Countdown** web app built with pure **HTML**, **CSS**, and **JavaScript** — no frameworks, no dependencies.
 
-Displays the three main Forex sessions: Asia, London, New York.
+It displays the status (Open / Closed) of the three major Forex sessions — **Asia (Tokyo)**, **London**, and **New York** — with live countdowns showing time remaining until close (when open) or until open (when closed).  
+This version is optimized and simplified for **South African Standard Time (SAST / UTC+2)**.
 
-Shows Open/Closed status for each session.
+## Features
 
-Real-time countdown timer for time left to close or until open.
+- Real-time status for the three main Forex sessions: **Asia**, **London**, **New York**
+- Clear **Open** / **Closed** indicators with color coding
+- Live countdown timer for time left to session close or next open
+- Displays current local time in **SAST**
+- Visual session icons and status badges for quick scanning
+- Auto-updates every second
+- Fully responsive design — works great on mobile, tablet, and desktop
+- Extremely lightweight (~few KB) and fast-loading
 
-Displays current local time (SAST).
+Feel free to bookmark it or add it to your trading dashboard!
 
-Session icons and status indicators for visual clarity.
-
-Updates every second automatically.
-
-Fully responsive and lightweight, built with only HTML, CSS, and JS.
