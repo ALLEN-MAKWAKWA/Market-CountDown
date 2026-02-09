@@ -1,6 +1,7 @@
 # Forex Market Countdown
 
-**Live Demo:** 🌐 https://marketcountdown.netlify.app
+[![Netlify Status](https://api.netlify.com/api/v1/badges/<YOUR_NETLIFY_SITE_ID>/deploy-status)](https://app.netlify.com/sites/marketcountdown/deploys)  
+**Live Demo:** 🌐 [https://marketcountdown.netlify.app](https://marketcountdown.netlify.app)
 
 A clean, real-time **Forex Market Session Countdown** web app built with pure **HTML**, **CSS**, and **JavaScript** — no frameworks, no dependencies.
 
